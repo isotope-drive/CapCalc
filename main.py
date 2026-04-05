@@ -18,7 +18,7 @@ class CodeSolver():
 		self.value : str = input("3 digit code: ").upper()
 
 		if self.rlc.upper() in {"R","L","C"} and (len(self.value) == 3):
-			self.rlc = self.rlc #secret area, not sure what to do in this situation
+			self.rlc = self.rlc #secret area, 
 		else:
 			print("Bad input, please enter again\n")
 			self.prompter()
