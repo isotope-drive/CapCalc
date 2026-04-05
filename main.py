@@ -18,7 +18,7 @@ class CodeSolver():
 		self.value : str = input("3 digit code: ").upper()
 
 		if self.rlc.upper() in {"R","L","C"} and (len(self.value) == 3):
-			self.rlc = self.rlc #secret area, 
+			self.rlc = self.rlc #secret area, not sure what to do in this situation
 		else:
 			print("Bad input, please enter again\n")
 			self.prompter()
@@ -32,7 +32,7 @@ class CodeSolver():
 				self.solveCap()
 			case "L":
 				self.unit = "H"
-				self.solveCap() #it works the same. If you want to fix the naming please do. 
+				self.solveInd() 
 
 
 		self.format_output()
@@ -48,6 +48,10 @@ class CodeSolver():
 	def solveCap(self):
 		A,B,C = map(int, self.value)
 		self.solution = (10*A + B) * (10**C)
+
+	def solveInd(self):
+		A,B,C =map(int, self.value)
+		self.solution = (10*A + B) * (10**C) * 1_000_000
 
 	def format_output(self):
 		prefixes = ["p", "n", "u", "m", "", "k", "M"]
