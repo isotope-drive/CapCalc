@@ -9,22 +9,19 @@ class CodeSolver():
 		self.unit = None #FHO
 
 
-		self.prompter()
-		self.controller()
-
-
 	def prompter(self):
 		self.rlc : str = input("RLC?:  ").upper()
 		self.value : str = input("3 digit code: ").upper()
 
 		if self.rlc.upper() in {"R","L","C"} and (len(self.value) == 3):
-			self.rlc = self.rlc #secret area, not sure what to do in this situation
+			self.rlc = self.rlc #secret area
 		else:
 			print("Bad input, please enter again\n")
 			self.prompter()
 
 
 	def controller(self):
+		self.prompter()
 
 		match self.rlc:
 			case "C":
@@ -34,14 +31,11 @@ class CodeSolver():
 				self.unit = "H"
 				self.solveInd() 
 
-
 		self.format_output()
 
 		if input("Again? (Y/N):  ") != "Y":
 			print("<-")
 		else: 
-			self.rlc = input("RLC?: ")
-			self.value = input("3 digit value: ")
 			self.controller()	
 
 
@@ -81,10 +75,10 @@ class ValueSolver():
 		}
 		self.solution = None
 
-		self.controller()
+		self.controller() #init dependency
 
 	def prompter(self):
-		self.rlc = input("RLC?: ")
+		self.rlc = input("RLC?: ").upper()  # Model after other prompter
 		self.value = input("Enter value: ")
 		self.prefix = input("Enter prefix: ")
 
@@ -99,6 +93,7 @@ class ValueSolver():
 	def encode(self):
 	    # base_value is now in picofarads
 	    pf = self.base_value
+	    uh = self.base_value * 1_000_000
 
 	    exponent = int(math.floor(math.log10(pf))) - 1
 	    significand = int(round(pf / (10 ** exponent)))
@@ -111,7 +106,7 @@ class ValueSolver():
 	    self.solution = f"{significand:02d}{exponent}"
 
 	def format_output(self):
-		print(f"{self.solution}")
+		print(f"\n   {self.solution}\n")
 
 	def controller(self):
 		self.prompter()
@@ -132,8 +127,10 @@ def lead_controller():
 		version = input("1: Value to code\n2: Code to value\n3: Quit\n   ->")
 		if version == "1":
 			vsolve = ValueSolver()
+			vsolve.controller()
 		elif version == "2":
 			csolve = CodeSolver()
+			csolve.controller()
 		elif version == "3":
 			print("Goodbye")
 			cont = False
