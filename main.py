@@ -79,10 +79,16 @@ class ValueSolver():
 
 	def prompter(self):
 		self.rlc = input("RLC?: ").upper()  # Model after other prompter
-		self.value = input("Enter value: ")
-		self.prefix = input("Enter prefix: ")
+		self.value = input("Enter value: ").upper()
+		self.prefix = input("Enter prefix: ").upper()
 
-	def normalize(self): #Used Claude Code for this and encode
+		if self.rlc not in {"R","L","C"}:
+			print("Invalid input")
+			self.prompter()
+
+
+
+	def normalize(self): #Used Claude Code for (some of) this and encode
 	    prefix = self.prefix or ""
 	    multiplier = self.PREFIXES.get(prefix, 1)
 	    base_value = float(self.value) * multiplier  # value in base units (Farads)
@@ -92,18 +98,28 @@ class ValueSolver():
 
 	def encode(self):
 	    # base_value is now in picofarads
-	    pf = self.base_value
-	    uh = self.base_value * 1_000_000
+		pf = self.base_value
+		uh = (self.base_value / 1e12) * 1_000_000
 
-	    exponent = int(math.floor(math.log10(pf))) - 1
-	    significand = int(round(pf / (10 ** exponent)))
+		if self.rlc == "R":
+		    exponent = int(math.floor(math.log10(pf))) - 1
+		    significand = int(round(pf / (10 ** exponent)))
 
-	    # Handle rounding edge case (e.g. significand hits 100)
-	    if significand >= 100:
-	        significand //= 10
-	        exponent += 1
+		# Handle rounding edge case (e.g. significand hits 100)
+		    if significand >= 100:
+		        significand //= 10
+		        exponent += 1
+		   
 
-	    self.solution = f"{significand:02d}{exponent}"
+		elif self.rlc == "L":
+			exponent = int(math.floor(math.log10(uh))) - 7
+			significand = int(round(uh / (10 ** (exponent + 6))))
+
+			if significand >= 100:
+				significand //= 10
+				exponent += 1
+
+		self.solution = f"{significand:02d}{exponent}"
 
 	def format_output(self):
 		print(f"\n   {self.solution}\n")
@@ -124,7 +140,7 @@ class ValueSolver():
 def lead_controller():
 	cont = True
 	while(cont == True):
-		version = input("1: Value to code\n2: Code to value\n3: Quit\n   ->")
+		version = input("| 1: Value to code |\n| 2: Code to value |\n| 3: Quit          |\n   ->")
 		if version == "1":
 			vsolve = ValueSolver()
 			vsolve.controller()
