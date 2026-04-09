@@ -7,5 +7,7 @@ Deceptive name, works for any 3 digit codes. <b>Does not have resistor functiona
 To do:
 
   [Done] Fix L calculations for value to code
+  
   [] Either remove R functionality or make it work
+  
   [] Tkinter? Not me...
