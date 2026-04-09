@@ -13,11 +13,10 @@ class CodeSolver():
 		self.rlc : str = input("RLC?:  ").upper()
 		self.value : str = input("3 digit code: ").upper()
 
-		if self.rlc.upper() in {"R","L","C"} and (len(self.value) == 3):
-			self.rlc = self.rlc #secret area
-		else:
+		if not (self.rlc in {"R","L","C"} and (len(self.value) == 3)):
 			print("Bad input, please enter again\n")
 			self.prompter()
+
 
 
 	def controller(self):
@@ -30,6 +29,8 @@ class CodeSolver():
 			case "L":
 				self.unit = "H"
 				self.solveInd() 
+			case _:
+				self.prompter()
 
 		self.format_output()
 
@@ -141,16 +142,18 @@ def lead_controller():
 	cont = True
 	while(cont == True):
 		version = input("| 1: Value to code |\n| 2: Code to value |\n| 3: Quit          |\n   ->")
-		if version == "1":
-			vsolve = ValueSolver()
-			vsolve.controller()
-		elif version == "2":
-			csolve = CodeSolver()
-			csolve.controller()
-		elif version == "3":
-			print("Goodbye")
-			cont = False
-		else:
-			"Invalid input \n "
+		match version:
+			case "1":
+				vsolve = ValueSolver()
+				vsolve.controller()
+			case "2":
+				csolve = CodeSolver()
+				csolve.controller()
+			case "3":
+				cont = False
+				break
+			case _:
+				print("Invalid input \n")
+
 
 lead_controller()
