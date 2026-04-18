@@ -45,7 +45,7 @@ class CodeSolver():
 		self.solution = (10*A + B) * (10**C)
 
 	def solveInd(self):
-		A,B,C =map(int, self.value)
+		A,B,C = map(int, self.value)
 		self.solution = (10*A + B) * (10**C) * 1_000_000
 
 	def format_output(self):
@@ -64,71 +64,33 @@ class ValueSolver():
 		self.rlc = None	#str
 		self.value = None #str
 		self.prefix = None #str
-		self.base_value = None #float
-		self.PREFIXES = {
-		    "p": 1e-12,
-		    "n": 1e-9,
-		    "u": 1e-6,
-		    "m": 1e-3,
-		    "": 1,
-		    "k": 1e3,
-		    "M": 1e6
-		}
 		self.solution = None
-
-		self.controller() #init dependency
+		self.prefixes = ["p", "n", "u", "m", "", "k", "M"]
 
 	def prompter(self):
 		self.rlc = input("RLC?: ").upper()  # Model after other prompter
-		self.value = input("Enter value: ").upper()
-		self.prefix = input("Enter prefix: ").upper()
+		self.value = int(input("Enter value: "))
+		self.prefix = input("Enter prefix: ")
 
-		#if not ((self.rlc in {"R","L","C"}) and (self.prefix in {"p","n","u","m","","k","M"})):
-		#	print("Invalid input")
-		#	self.prompter()
+		if not ((self.rlc in {"R","L","C"}) and (self.prefix in self.prefixes)):
+			print("Invalid input")
+			self.prompter()
 
-
-
-	def normalize(self): #Used Claude Code for (some of) this and encode
-	    prefix = self.prefix or ""
-	    multiplier = self.PREFIXES.get(prefix, 1)
-	    base_value = float(self.value) * multiplier  # value in base units (Farads)
-
-	    # Convert to picofarads for encoding
-	    self.base_value = base_value * 1e12
-
-	def encode(self):
-	    # base_value is now in picofarads
-		pf = self.base_value
-		uh = (self.base_value / 1e12) * 1_000_000
-
-		if self.rlc == "C":
-		    exponent = int(math.floor(math.log10(pf))) - 1
-		    significand = int(round(pf / (10 ** exponent)))
-
-		# Handle rounding edge case (e.g. significand hits 100)
-		    if significand >= 100:
-		        significand //= 10
-		        exponent += 1
-		   
-
-		elif self.rlc == "L":
-			exponent = int(math.floor(math.log10(uh))) - 7
-			significand = int(round(uh / (10 ** (exponent + 6))))
-
-			if significand >= 100:
-				significand //= 10
-				exponent += 1
-
-		self.solution = f"{significand:02d}{exponent}"
 
 	def format_output(self):
 		print(f"\n   {self.solution}\n")
 
 	def controller(self):
 		self.prompter()
-		self.normalize()
-		self.encode()
+
+		match self.rlc:
+			case "L":
+				self.solveInd()
+			case "C":
+				self.solveCap()
+			case _:
+				self.prompter()
+
 		self.format_output()
 
 		again = input("Again? (Y/N)")
@@ -137,6 +99,17 @@ class ValueSolver():
 		else: 
 			self.controller()
 
+	def solveInd(self):
+		for i, prefix in enumerate(self.prefixes):
+			if self.prefix == prefix:
+				self.solution = f"{self.value}{(i*3)-5}" if self.prefix == "u" else f"{self.value}{(i*3)-6}"
+				break
+
+	def solveCap(self):
+		for i, prefix in enumerate(self.prefixes):
+			if self.prefix == prefix:
+				self.solution = f"{self.value}{(i*3)}"
+				break
 
 def lead_controller():
 	cont = True
@@ -154,6 +127,5 @@ def lead_controller():
 				break
 			case _:
 				print("Invalid input \n")
-
 
 lead_controller()
