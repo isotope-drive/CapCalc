@@ -83,9 +83,9 @@ class ValueSolver():
 		self.value = input("Enter value: ").upper()
 		self.prefix = input("Enter prefix: ").upper()
 
-		if self.rlc not in {"R","L","C"}:
-			print("Invalid input")
-			self.prompter()
+		#if not ((self.rlc in {"R","L","C"}) and (self.prefix in {"p","n","u","m","","k","M"})):
+		#	print("Invalid input")
+		#	self.prompter()
 
 
 
@@ -102,7 +102,7 @@ class ValueSolver():
 		pf = self.base_value
 		uh = (self.base_value / 1e12) * 1_000_000
 
-		if self.rlc == "R":
+		if self.rlc == "C":
 		    exponent = int(math.floor(math.log10(pf))) - 1
 		    significand = int(round(pf / (10 ** exponent)))
 
