@@ -90,7 +90,7 @@ class CodeSolver():
 		Description: Solves for inductor values
 		"""
 		a,b,c = map(int, self.value)
-		self.solution = (10*a + b) * (10**c) * 1_000_000
+		self.solution = (10*a + b) * (10**c) * 100_000
 
 	def format_output(self):
 		"""
